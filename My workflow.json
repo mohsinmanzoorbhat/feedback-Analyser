@@ -1,0 +1,336 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "*/5 * * * *"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI",
+          "mode": "list",
+          "cachedResultName": "T-Shirt Sign Up (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 432991649,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI/edit#gid=432991649"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        144
+      ],
+      "id": "3c9144ae-7601-47bb-ab8c-39ef26cfbcbf",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "MSCaBmCMihPUkyEl",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -224,
+        144
+      ],
+      "id": "72d48d65-03ce-4753-a1d0-bb058a99a10d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        0,
+        192
+      ],
+      "id": "e074ac6f-4281-48ad-a113-1374c87debbd"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d8bd3bdb-06d9-4de4-8557-cd7468de62f2",
+              "leftValue": "={{ $json[\"feedback\"].toString() }}\n",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1171f4b6-a860-40d6-90bb-192b3b762f5e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const rating = parseInt(item.json.feedback);\n\n  let label = \"\";\n  if (rating <= 2) label = \"Too Poor\";\n  else if (rating === 3) label = \"Moderate\";\n  else if (rating === 4) label = \"Good\";\n  else if (rating === 5) label = \"Excellent\";\n  else label = \"Invalid\";\n\n  return {\n    json: {\n      ...item.json,\n      label,\n    },\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8ba48186-be8b-430d-8d92-59adf2e6f24c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI",
+          "mode": "list",
+          "cachedResultName": "T-Shirt Sign Up (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 432991649,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI/edit#gid=432991649"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{$json[\"row_number\"]}}",
+            "label": "={{$json[\"label\"]}}",
+            "Timestamp": "={{ $json.Timestamp }}",
+            "Name": "={{ $json.Name }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "feedback",
+              "displayName": "feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "label",
+              "displayName": "label",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        448,
+        0
+      ],
+      "id": "34211436-7963-4938-ab4d-81ace182f047",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dOXHFxcFF8t7u7z4",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI",
+          "mode": "list",
+          "cachedResultName": "T-Shirt Sign Up (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 432991649,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IfXn2nVyLbOljs6-qsFT7e2QdOuxyWttqol9bWEexsI/edit#gid=432991649"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -448,
+        144
+      ],
+      "id": "eb9589b3-bf54-4055-9c10-e38548844c14",
+      "name": "Get row(s) in sheet",
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jWpkml4YwXT0pWHu",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ca379ffb-9cf6-45f2-afc8-ce8d5318892b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "42beaef3e40d95f240ff6366417c1ed2a5f1f0527271554aff623e4787a2b5b4"
+  },
+  "id": "eyFJRarLHnIHYvLc",
+  "tags": []
+}
